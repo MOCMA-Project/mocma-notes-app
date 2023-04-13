@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MOCMA Notes</string>
+    <string name="add_a_note">Add a note</string>
+    <string name="no_note_yet">No note yet</string>
 </resources>

@@ -13,8 +13,8 @@ interface NoteDao {
     fun getAllNotes(): Flow<List<NoteEntity>>
 
     @Upsert
-    fun upsertNote(note: NoteEntity)
+    suspend fun upsertNote(note: NoteEntity)
 
     @Delete
-    fun deleteNote(note: NoteEntity)
+    suspend fun deleteNote(note: NoteEntity)
 }
