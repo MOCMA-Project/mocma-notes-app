@@ -6,16 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.mocma.notes.R
 import com.mocma.notes.model.NoteEntity
 import com.mocma.notes.viewmodel.NoteDialogViewModel
@@ -23,22 +25,27 @@ import com.mocma.notes.viewmodel.NoteDialogViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteDialog(
+    navController: NavController,
     noteDialogViewModel: NoteDialogViewModel,
-    title: String,
-    text: String,
-    id: Long,
     onSave: (NoteEntity) -> Unit,
     onDismiss: () -> Unit
 ) {
-    noteDialogViewModel.setNote(title, text, id)
-
-    AlertDialog(onDismissRequest = onDismiss, modifier = Modifier
-        .clip(RoundedCornerShape(8.dp))
-        .background(MaterialTheme.colorScheme.background)
-        .padding(16.dp)
-    ) {
-        Column {
-            if (id == 0L) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.app_name)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(R.string.go_back))
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            if (noteDialogViewModel.id == 0L) {
                 Text(text = stringResource(R.string.add_a_note), color = MaterialTheme.colorScheme.onBackground)
                 Spacer(modifier = Modifier.height(8.dp))
             }

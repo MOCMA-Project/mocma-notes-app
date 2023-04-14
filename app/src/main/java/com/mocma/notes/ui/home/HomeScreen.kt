@@ -16,15 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.mocma.notes.R
+import com.mocma.notes.navigation.Screen
 import com.mocma.notes.viewmodel.HomeViewModel
-import com.mocma.notes.viewmodel.NoteDialogViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
-    noteDialogViewModel: NoteDialogViewModel
+    navController: NavController
 ) {
     val notes = homeViewModel.notes.collectAsState(initial = emptyList())
 
@@ -39,8 +40,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             IconButton(onClick = {
-                homeViewModel.setNote()
-                homeViewModel.showDialog = true
+                navController.navigate(Screen.Note.route)
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -48,11 +48,11 @@ fun HomeScreen(
                 )
             }
         }
-    ) {
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(paddingValues)
                 .padding(16.dp)
         ) {
             if (notes.value.isEmpty()) {
@@ -65,8 +65,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    homeViewModel.setNote(note.title, note.text, note.id)
-                                    homeViewModel.showDialog = true
+                                    navController.navigate(Screen.Note.route)
                                 },
                                 onLongClick = {
                                     homeViewModel.deleteNote(note)
@@ -86,21 +85,5 @@ fun HomeScreen(
                 }
             }
         }
-    }
-
-    if (homeViewModel.showDialog) {
-        NoteDialog(
-            noteDialogViewModel = noteDialogViewModel,
-            title = homeViewModel.title,
-            text = homeViewModel.text,
-            id = homeViewModel.id,
-            onSave = { note ->
-                homeViewModel.upsertNote(note)
-                homeViewModel.showDialog = false
-            },
-            onDismiss = {
-                homeViewModel.showDialog = false
-            }
-        )
     }
 }

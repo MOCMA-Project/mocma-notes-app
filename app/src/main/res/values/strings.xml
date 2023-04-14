@@ -6,4 +6,5 @@
     <string name="text">Text</string>
     <string name="dismiss">Dismiss</string>
     <string name="save">Save</string>
+    <string name="go_back">Go back</string>
 </resources>

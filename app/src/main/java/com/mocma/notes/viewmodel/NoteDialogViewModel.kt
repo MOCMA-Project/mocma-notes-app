@@ -6,13 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class NoteDialogViewModel: ViewModel() {
+    var id by mutableStateOf(0L)
     var title by mutableStateOf("")
     var text by mutableStateOf("")
-    var id by mutableStateOf(0L)
-
-    fun setNote(noteTitle: String, noteText: String, noteId: Long) {
-        title = noteTitle
-        text = noteText
-        id = noteId
-    }
 }
