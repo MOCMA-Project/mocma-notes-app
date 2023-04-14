@@ -17,13 +17,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mocma.notes.R
-import com.mocma.notes.model.NoteEntity
 import com.mocma.notes.viewmodel.HomeViewModel
+import com.mocma.notes.viewmodel.NoteDialogViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    noteDialogViewModel: NoteDialogViewModel
 ) {
     val notes = homeViewModel.notes.collectAsState(initial = emptyList())
 
@@ -38,12 +39,8 @@ fun HomeScreen(
         },
         floatingActionButton = {
             IconButton(onClick = {
-                homeViewModel.upsertNote(
-                    NoteEntity(
-                        title = "fake note",
-                        text = "this is a fake note"
-                    )
-                )
+                homeViewModel.setNote()
+                homeViewModel.showDialog = true
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -67,7 +64,10 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier
                             .combinedClickable(
-                                onClick = {},
+                                onClick = {
+                                    homeViewModel.setNote(note.title, note.text, note.id)
+                                    homeViewModel.showDialog = true
+                                },
                                 onLongClick = {
                                     homeViewModel.deleteNote(note)
                                 }
@@ -86,5 +86,21 @@ fun HomeScreen(
                 }
             }
         }
+    }
+
+    if (homeViewModel.showDialog) {
+        NoteDialog(
+            noteDialogViewModel = noteDialogViewModel,
+            title = homeViewModel.title,
+            text = homeViewModel.text,
+            id = homeViewModel.id,
+            onSave = { note ->
+                homeViewModel.upsertNote(note)
+                homeViewModel.showDialog = false
+            },
+            onDismiss = {
+                homeViewModel.showDialog = false
+            }
+        )
     }
 }

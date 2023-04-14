@@ -3,4 +3,8 @@
     <string name="app_name">MOCMA Notes</string>
     <string name="add_a_note">Aggiungere una nota</string>
     <string name="no_note_yet">Ancora nessuna nota</string>
+    <string name="title">Titolo</string>
+    <string name="text">Testo</string>
+    <string name="dismiss">Annullare</string>
+    <string name="save">Salvare</string>
 </resources>
