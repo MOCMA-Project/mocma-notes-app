@@ -21,7 +21,7 @@ import com.mocma.notes.R
 import com.mocma.notes.model.NoteEntity
 import com.mocma.notes.viewmodel.HomeViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel
@@ -30,13 +30,11 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            Text(
-                text = stringResource(R.string.app_name),
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(20.dp)
+            TopAppBar(
+                title = { Text(text = stringResource(R.string.app_name)) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
             )
         },
         floatingActionButton = {
@@ -58,6 +56,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(it)
                 .padding(16.dp)
         ) {
             if (notes.value.isEmpty()) {
