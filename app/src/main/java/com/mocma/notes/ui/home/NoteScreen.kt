@@ -32,14 +32,10 @@ fun NoteScreen(
     navigator: DestinationsNavigator,
     noteScreenViewModel: NoteScreenViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
-    onSave: (NoteEntity) -> Unit = { note ->
-        homeViewModel.upsertNote(note)
-        navigator.popBackStack()
-    },
-    onDismiss: () -> Unit = { navigator.popBackStack() },
     id: Long = 0,
     title: String = "",
-    text: String = ""
+    text: String = "",
+    createdAt: Long = 0L
 ) {
     noteScreenViewModel.id = id
     noteScreenViewModel.title = title
@@ -123,18 +119,22 @@ fun NoteScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(onClick = onDismiss) {
+                Button(onClick = {
+                    navigator.popBackStack()
+                }) {
                     Text(text = stringResource(R.string.dismiss))
                 }
 
                 Button(onClick = {
-                    onSave(
+                    homeViewModel.upsertNote(
                         NoteEntity(
-                            noteScreenViewModel.id,
-                            noteScreenViewModel.title,
-                            noteScreenViewModel.text
-                        )
+                            id = noteScreenViewModel.id,
+                            title = noteScreenViewModel.title,
+                            text = noteScreenViewModel.text,
+                            createdAt = createdAt
+                        ),
                     )
+                    navigator.popBackStack()
                 }) {
                     Text(text = stringResource(R.string.save))
                 }

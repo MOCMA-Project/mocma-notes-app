@@ -15,6 +15,11 @@ class HomeViewModel @Inject constructor(
     val notes = noteRepository.getAllNotes()
 
     fun upsertNote(note: NoteEntity) {
+        val timestamp = System.currentTimeMillis()
+        if (note.createdAt == 0L) {
+            note.createdAt = timestamp
+        }
+        note.modifiedAt = timestamp
         viewModelScope.launch {
             noteRepository.upsertNote(note)
         }
