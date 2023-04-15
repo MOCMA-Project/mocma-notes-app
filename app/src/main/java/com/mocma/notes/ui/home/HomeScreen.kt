@@ -16,16 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mocma.notes.R
-import com.mocma.notes.navigation.Screen
+import com.mocma.notes.ui.home.destinations.NoteScreenDestination
 import com.mocma.notes.viewmodel.HomeViewModel
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(start = true)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel,
-    navController: NavController
+    navigator: DestinationsNavigator,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val notes = homeViewModel.notes.collectAsState(initial = emptyList())
 
@@ -40,7 +43,9 @@ fun HomeScreen(
         },
         floatingActionButton = {
             IconButton(onClick = {
-                navController.navigate(Screen.Note.route)
+                navigator.navigate(
+                    NoteScreenDestination(title = "", text = "")
+                )
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -65,7 +70,13 @@ fun HomeScreen(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    navController.navigate(Screen.Note.route)
+                                    navigator.navigate(
+                                        NoteScreenDestination(
+                                            note.id,
+                                            note.title,
+                                            note.text
+                                        )
+                                    )
                                 },
                                 onLongClick = {
                                     homeViewModel.deleteNote(note)

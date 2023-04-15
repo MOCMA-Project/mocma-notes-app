@@ -17,25 +17,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mocma.notes.R
 import com.mocma.notes.model.NoteEntity
-import com.mocma.notes.viewmodel.NoteDialogViewModel
+import com.mocma.notes.viewmodel.HomeViewModel
+import com.mocma.notes.viewmodel.NoteScreenViewModel
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteDialog(
-    navController: NavController,
-    noteDialogViewModel: NoteDialogViewModel,
-    onSave: (NoteEntity) -> Unit,
-    onDismiss: () -> Unit
+fun NoteScreen(
+    navigator: DestinationsNavigator,
+    noteScreenViewModel: NoteScreenViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    onSave: (NoteEntity) -> Unit = { note ->
+        homeViewModel.upsertNote(note)
+        navigator.popBackStack()
+    },
+    onDismiss: () -> Unit = { navigator.popBackStack() },
+    id: Long = 0,
+    title: String = "",
+    text: String = ""
 ) {
+    noteScreenViewModel.id = id
+    noteScreenViewModel.title = title
+    noteScreenViewModel.text = text
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(R.string.go_back))
                     }
                 }
@@ -45,7 +60,7 @@ fun NoteDialog(
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            if (noteDialogViewModel.id == 0L) {
+            if (noteScreenViewModel.id == 0L) {
                 Text(text = stringResource(R.string.add_a_note), color = MaterialTheme.colorScheme.onBackground)
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -56,10 +71,10 @@ fun NoteDialog(
             ) {
                 item {
                     BasicTextField(
-                        value = noteDialogViewModel.title,
-                        onValueChange = { noteDialogViewModel.title = it },
+                        value = noteScreenViewModel.title,
+                        onValueChange = { noteScreenViewModel.title = it },
                         decorationBox = {
-                            if (noteDialogViewModel.title.isEmpty()) Text(stringResource(R.string.title), color = Color.Gray, fontSize = MaterialTheme.typography.bodyLarge.fontSize)
+                            if (noteScreenViewModel.title.isEmpty()) Text(stringResource(R.string.title), color = Color.Gray, fontSize = MaterialTheme.typography.bodyLarge.fontSize)
                             it()
                         },
                         modifier = Modifier
@@ -82,10 +97,10 @@ fun NoteDialog(
                     )
 
                     BasicTextField(
-                        value = noteDialogViewModel.text,
-                        onValueChange = { noteDialogViewModel.text = it },
+                        value = noteScreenViewModel.text,
+                        onValueChange = { noteScreenViewModel.text = it },
                         decorationBox = {
-                            if (noteDialogViewModel.text.isEmpty()) Text(stringResource(R.string.text), color = Color.Gray, fontSize = MaterialTheme.typography.bodySmall.fontSize)
+                            if (noteScreenViewModel.text.isEmpty()) Text(stringResource(R.string.text), color = Color.Gray, fontSize = MaterialTheme.typography.bodySmall.fontSize)
                             it()
                         },
                         modifier = Modifier
@@ -115,9 +130,9 @@ fun NoteDialog(
                 Button(onClick = {
                     onSave(
                         NoteEntity(
-                            noteDialogViewModel.id,
-                            noteDialogViewModel.title,
-                            noteDialogViewModel.text
+                            noteScreenViewModel.id,
+                            noteScreenViewModel.title,
+                            noteScreenViewModel.text
                         )
                     )
                 }) {
