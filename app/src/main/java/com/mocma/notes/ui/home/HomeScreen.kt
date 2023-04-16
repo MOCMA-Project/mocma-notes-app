@@ -74,7 +74,8 @@ fun HomeScreen(
                                         NoteScreenDestination(
                                             note.id,
                                             note.title,
-                                            note.text
+                                            note.text,
+                                            note.createdAt
                                         )
                                     )
                                 },
